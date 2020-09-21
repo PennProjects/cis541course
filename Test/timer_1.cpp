@@ -3,6 +3,10 @@
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
 #include <iomanip> //Needed for formatting cout
+#include <termios.h>
+#include <stdlib.h>
+#include <unistd.h> 
+#include <fcntl.h> 
 
 using std::cout;
 using std::cin;
@@ -20,6 +24,33 @@ pthread_cond_t* min;
 int ds =0,s=0,m=0;
 char c;
 
+//keyboard hit detect
+int keyboardhit(void) 
+{ 
+	struct termios oldt, newt; 
+	int ch; 
+	int oldf; 
+
+	tcgetattr(STDIN_FILENO, &oldt); 
+	newt = oldt; 
+	newt.c_lflag &= ~(ICANON | ECHO); 
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+	oldf = fcntl(STDIN_FILENO, F_GETFL, 0); 
+	fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK); 
+
+	ch = getchar(); 
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
+	fcntl(STDIN_FILENO, F_SETFL, oldf); 
+
+	if (ch != EOF) { 
+		ungetc(ch, stdin); 
+		return 1; 
+	} 
+
+	return 0; 
+}
+
 //thread to print timer
 void* print_timer(void* args){
 
@@ -29,10 +60,14 @@ void* print_timer(void* args){
     pthread_mutex_lock(mutex);
 
     //print MM:SS.d
+    if(keyboardhit()){
+        c = getchar();
+    }
     cout << "\r" << setw(2) << setfill('0') << m << ":"
                  << setw(2) << setfill('0') << s << "." 
                  << setw(1) << setfill(' ') << ds
                  <<" " << c<< flush;
+        
 
     // unlock mutex
     pthread_mutex_unlock(mutex);
