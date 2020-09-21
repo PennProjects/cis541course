@@ -3,6 +3,10 @@
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
 #include <iomanip> //Needed for formatting cout
+#include <termios.h>
+#include <stdlib.h>
+#include <unistd.h> 
+#include <fcntl.h> 
 
 using std::cout;
 using std::cin;
@@ -20,6 +24,33 @@ pthread_cond_t* min;
 int ds =0,s=0,m=0;
 char c;
 
+//keyboard hit detect
+int keyboardhit(void) 
+{ 
+	struct termios oldt, newt; 
+	int ch; 
+	int oldf; 
+
+	tcgetattr(STDIN_FILENO, &oldt); 
+	newt = oldt; 
+	newt.c_lflag &= ~(ICANON | ECHO); 
+	tcsetattr(STDIN_FILENO, TCSANOW, &newt); 
+	oldf = fcntl(STDIN_FILENO, F_GETFL, 0); 
+	fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK); 
+
+	ch = getchar(); 
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &oldt); 
+	fcntl(STDIN_FILENO, F_SETFL, oldf); 
+
+	if (ch != EOF) { 
+		ungetc(ch, stdin); 
+		return 1; 
+	} 
+
+	return 0; 
+}
+
 //thread to print timer
 void* print_timer(void* args){
 
@@ -29,10 +60,16 @@ void* print_timer(void* args){
     pthread_mutex_lock(mutex);
 
     //print MM:SS.d
+    if(keyboardhit()){
+        c = getchar();
+    }
+
+    setbuf(stdout, NULL);
     cout << "\r" << setw(2) << setfill('0') << m << ":"
                  << setw(2) << setfill('0') << s << "." 
                  << setw(1) << setfill(' ') << ds
-                 <<" " << c<< flush;
+                 <<" " << c;
+        
 
     // unlock mutex
     pthread_mutex_unlock(mutex);
@@ -42,13 +79,6 @@ void* print_timer(void* args){
     
 }
 
-//thread to read from keyboard
-void* kb_read(void* args){
-
-    while(true){
-        std::cin >> c;
-    }
-}
 
 //thread to calculate deciseconds
 void* ds_timer(void* args) {
@@ -65,7 +95,19 @@ void* ds_timer(void* args) {
 
     //Sleep this thread for 1 decisec 
     nanosleep(&sleep_time, NULL);
-    ds = ds+1;
+    if (c == 'S' ||  c== 's'){
+        ds = ds+1;
+    }
+    if (c== 'P' || c== 'p'){
+        ds = ds;
+    }
+    if (c== 'R' or c == 'r'){
+        ds = 0;
+        s = 0;
+        m = 0;
+    }
+
+    
 
     //to signal that 10ds are completed and s can be incremented
     if (ds > 9) {
@@ -96,7 +138,7 @@ void* s_timer(void* args) {
         s = s+1; //increment s after 10ds wait
 
         //to signal that 60s are completed and m can be incremented
-        if (s >5){
+        if (s >59){
             pthread_cond_signal(min);
             s = 0;
         }
@@ -115,13 +157,13 @@ void* m_timer(void* args) {
         pthread_mutex_lock(mutex);
 
         //wait till s thread signals 59s completed
-        while(s <= 5){ 
+        while(s <= 59){ 
         pthread_cond_wait(min,mutex);
         }
         m = m+1;
 
         //reset min after 59m
-        if (m >5){
+        if (m >59){
             m = 0;
         }
 

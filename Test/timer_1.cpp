@@ -63,27 +63,24 @@ void* print_timer(void* args){
     if(keyboardhit()){
         c = getchar();
     }
+
+    // setbuf(stdout, NULL);
     cout << "\r" << setw(2) << setfill('0') << m << ":"
                  << setw(2) << setfill('0') << s << "." 
                  << setw(1) << setfill(' ') << ds
-                 <<" " << c<< flush;
+                //  <<" " << c;
+                 <<" " << c <<flush;
         
 
-    // unlock mutex
+    // unlock mutexss
     pthread_mutex_unlock(mutex);
+
 
     }
 
     
 }
 
-//thread to read from keyboard
-void* kb_read(void* args){
-
-    while(true){
-        std::cin >> c;
-    }
-}
 
 //thread to calculate deciseconds
 void* ds_timer(void* args) {
@@ -100,7 +97,19 @@ void* ds_timer(void* args) {
 
     //Sleep this thread for 1 decisec 
     nanosleep(&sleep_time, NULL);
-    ds = ds+1;
+    if (c == 'S' ||  c== 's'){
+        ds = ds+1;
+    }
+    if (c== 'P' || c== 'p'){
+        ds = ds;
+    }
+    if (c== 'R' or c == 'r'){
+        ds = 0;
+        s = 0;
+        m = 0;
+    }
+
+    
 
     //to signal that 10ds are completed and s can be incremented
     if (ds > 9) {
@@ -129,9 +138,10 @@ void* s_timer(void* args) {
         pthread_cond_wait(sec,mutex);
         }
         s = s+1; //increment s after 10ds wait
+        // cout <<s;
 
         //to signal that 60s are completed and m can be incremented
-        if (s >5){
+        if (s >59){
             pthread_cond_signal(min);
             s = 0;
         }
@@ -150,13 +160,13 @@ void* m_timer(void* args) {
         pthread_mutex_lock(mutex);
 
         //wait till s thread signals 59s completed
-        while(s <= 5){ 
+        while(s <= 59){ 
         pthread_cond_wait(min,mutex);
         }
         m = m+1;
 
         //reset min after 59m
-        if (m >5){
+        if (m >59){
             m = 0;
         }
 
