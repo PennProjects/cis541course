@@ -2,6 +2,15 @@
 #include <pthread.h> //Needed for thread functionality
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
+#include <iomanip>
+
+
+
+using std::cout;
+using std::endl;
+using std::flush;
+using std::setw;
+using std::setfill;
 
 //Use global variables for brevity
 pthread_mutex_t* mutex;
@@ -28,15 +37,16 @@ void* ds_timer(void* args) {
     nanosleep(&sleep_time, NULL);
     ds = ds+1;
 
-    if (ds > 15) {
-        pthread_cond_broadcast(sec);
+    if (ds > 9) {
+        pthread_cond_signal(sec);
         ds = 0;
         
     }
 
     //unlock mutex
     pthread_mutex_unlock(mutex);
-    // std::cout << "\r" << s << " : " << ds << std::flush;
+    // cout << "\r" << setw(2) << setfill('0') << s << " : " 
+    //              << ds <<flush;
     }
 
     
@@ -44,26 +54,19 @@ void* ds_timer(void* args) {
 
 void* s_timer(void* args) {
 
+    while(true){
     //Lock mutex till cond is met
     pthread_mutex_lock(mutex);
 
-    while(ds) 
-    pthread_cond_wait(sec,mutex);
-    std::cout <<sec <<std::endl;
+        while(ds <= 9){ 
+        pthread_cond_wait(sec,mutex);
+        }
         s = s+1;
+        cout <<s << endl;
 
-    pthread_mutex_unlock(mutex);
-
-    //Create a struct for storing time
-    // timespec sleep_time;
-    // sleep_time.tv_sec = 1;
-    // sleep_time.tv_nsec = 0;
-
-
-    // //Sleep this thread for 1 decisec 
-    // // If we are interrupted we do not care
-    // nanosleep(&sleep_time, NULL);
-    // s = s+1;
+        //unlock mutex
+        pthread_mutex_unlock(mutex);
+    }
 
 }
 
@@ -74,10 +77,12 @@ int main(int argc, char** argv){
     //create a new mutex
     mutex = new pthread_mutex_t();
     sec = new pthread_cond_t();
+    
 
     //Create a thread object on the heap for demonstration
     pthread_t* ds_thread = new pthread_t();
     pthread_t* s_thread = new pthread_t();
+    pthread_t* print_thread = new pthread_t();
 
     // Initialise the thread with the default attributes,
     // the "thread_routine" fuction, qnd no argumrnts
