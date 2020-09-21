@@ -77,6 +77,8 @@ void* ds_timer(void* args) {
 
     //Sleep this thread for 1 decisec 
     nanosleep(&sleep_time, NULL);
+        
+    //To handle start, pause and reset operations
     if (c == 'S' ||  c== 's'){
         ds = ds+1;
     }
@@ -102,7 +104,7 @@ void* s_timer(void* args) {
 
     while(true){
 
-    // Lock mutex till cond is met
+    // Lock mutex during execution
     pthread_mutex_lock(mutex_s);
 
     //Create a struct for storing time
@@ -110,8 +112,10 @@ void* s_timer(void* args) {
     sleep_time.tv_sec = 1;
     sleep_time.tv_nsec = 0;
 
-    //Sleep this thread for 1 decisec 
+    //Sleep this thread for 1 sec 
     nanosleep(&sleep_time, NULL);
+        
+    //To handle start, pause and reset operations
     if (c == 'S' ||  c== 's'){
         s = s+1;
     }
@@ -135,7 +139,7 @@ void* m_timer(void* args) {
 
     while(true){
 
-    // Lock mutex till cond is met
+    // Lock mutex during executiont
     pthread_mutex_lock(mutex_m);
 
     //Create a struct for storing time
@@ -143,8 +147,10 @@ void* m_timer(void* args) {
     sleep_time.tv_sec = 60;
     sleep_time.tv_nsec = 0;
 
-    //Sleep this thread for 1 decisec 
+    //Sleep this thread for 1 min 
     nanosleep(&sleep_time, NULL);
+        
+    //To handle start, pause and reset operations
     if (c == 'S' ||  c== 's'){
         m = m+1;
     }

@@ -30,10 +30,9 @@ void* print_timer(void* args){
     //delay print by 1 ds
     timespec sleep_time;
     sleep_time.tv_sec = 0;
-    sleep_time.tv_nsec = 100000000;
+    sleep_time.tv_nsec = 1000;
 
     //print MM:SS.d
-    // setbuf(stdout, NULL);
     cout << "\r" << setw(2) << setfill('0') << m << ":"
                  << setw(2) << setfill('0') << s << "." 
                  << setw(1) << setfill(' ') << ds
@@ -116,11 +115,8 @@ void* s_timer(void* args) {
         pthread_mutex_lock(mutex_s);
 
         //wait till ds thread signals 10ds completed
-        while(ds <= 9){ 
-        pthread_cond_wait(sec,mutex_ds);
-        }
+        pthread_cond_wait(sec,mutex_s);
         s = s+1; //increment s after 10ds wait
-        cout <<s;
 
         //to signal that 60s are completed and m can be incremented
         if (s >59){
@@ -142,11 +138,9 @@ void* m_timer(void* args) {
         pthread_mutex_lock(mutex_m);
 
         //wait till s thread signals 59s completed
-        while(s <= 59){ 
-        pthread_cond_wait(min,mutex_s);
-        }
+        pthread_cond_wait(min,mutex_m);
         m = m+1;
-
+        
         //reset min after 59m
         if (m >59){
             m = 0;
