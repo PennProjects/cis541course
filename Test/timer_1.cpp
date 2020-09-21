@@ -7,6 +7,7 @@
 
 
 using std::cout;
+using std::cin;
 using std::endl;
 using std::flush;
 using std::setw;
@@ -30,7 +31,7 @@ void* print_timer(void* args){
     cout << "\r" << setw(2) << setfill('0') << m << ":"
                  << setw(2) << setfill('0') << s << "." 
                  << setw(1) << setfill(' ') << ds
-                 <<" " << c <<flush;
+                 <<" " << c<< flush;
     }
 
     
@@ -39,7 +40,7 @@ void* print_timer(void* args){
 void* kb_read(void* args){
 
     while(true){
-        c = getchar();
+        std::cin >> c;
     }
 }
 
@@ -48,7 +49,7 @@ void* ds_timer(void* args) {
     while(true){
 
     // Lock mutex till cond is met
-    // pthread_mutex_lock(mutex);
+    pthread_mutex_lock(mutex);
 
     //Create a struct for storing time
     timespec sleep_time;
@@ -66,7 +67,7 @@ void* ds_timer(void* args) {
     }
 
     // unlock mutex
-    // pthread_mutex_unlock(mutex);
+    pthread_mutex_unlock(mutex);
     }
 
     
@@ -135,12 +136,16 @@ int main(int argc, char** argv){
     // Initialise the thread with the default attributes,
     // the "thread_routine" fuction, qnd no argumrnts
     pthread_create(print_thread, NULL, print_timer, mutex);
-    pthread_create(kb_thread, NULL , kb_read, mutex);
+    // pthread_create(kb_thread, NULL , kb_read, mutex);
     pthread_create(ds_thread, NULL , ds_timer, mutex);
     pthread_create(s_thread, NULL , s_timer, mutex);
     pthread_create(m_thread, NULL, m_timer, mutex);
 
     // wait for the new thread to join, ignoring any return valuea
+
+    cout << "enter value";
+    cin >> c;
+
     pthread_join(*ds_thread, NULL);
     pthread_join(*s_thread, NULL);
     pthread_join(*m_thread, NULL);
