@@ -14,8 +14,6 @@ using std::setfill;
 pthread_mutex_t* mutex_ds;
 pthread_mutex_t* mutex_s;
 pthread_mutex_t* mutex_m;
-pthread_cond_t* sec;
-pthread_cond_t* min;
 
 //global variable to save timer values
 int ds =0,s=0,m=0;
@@ -27,7 +25,7 @@ void* print_timer(void* args){
 
     while(true){
 
-    //delay print by 1 ds
+    //delay print by 1 us
     timespec sleep_time;
     sleep_time.tv_sec = 0;
     sleep_time.tv_nsec = 1000;
@@ -39,7 +37,7 @@ void* print_timer(void* args){
                 //  <<" " << c;
                  <<" " << c <<flush;
     
-    //delay print by 1 ds             
+    //delay print by 1 us             
     nanosleep(&sleep_time, NULL);   
 
     }
@@ -53,7 +51,8 @@ void* kb_read(void* args){
         //read keyboard input
         char prev_c =c;
         cin >>c;
-
+        
+        //ignore reset after start
         if(prev_c =='s' && c =='r'){
             c = 's';
         }
@@ -78,6 +77,8 @@ void* ds_timer(void* args) {
 
     //Sleep this thread for 1 decisec 
     nanosleep(&sleep_time, NULL);
+        
+    //To handle start, pause and reset operations
     if (c == 'S' ||  c== 's'){
         ds = ds+1;
     }
@@ -86,18 +87,9 @@ void* ds_timer(void* args) {
     }
     if (c== 'R' or c == 'r'){
         ds = 0;
-        s = 0;
-        m = 0;
     }
-
-    
-
-    //to signal that 10ds are completed and s can be incremented
-    if (ds > 9) {
-        pthread_cond_broadcast(sec);
-        ds = 0;
         
-    }
+    if(ds >9) ds = 0;
 
     // unlock mutex
     pthread_mutex_unlock(mutex_ds);
@@ -111,21 +103,33 @@ void* ds_timer(void* args) {
 void* s_timer(void* args) {
 
     while(true){
-        //Lock mutex till cond is met
-        pthread_mutex_lock(mutex_s);
 
-        //wait till ds thread signals 10ds completed
-        pthread_cond_wait(sec,mutex_s);
-        s = s+1; //increment s after 10ds wait
+    // Lock mutex during execution
+    pthread_mutex_lock(mutex_s);
 
-        //to signal that 60s are completed and m can be incremented
-        if (s >59){
-            pthread_cond_broadcast(min);
-            s = 0;
-        }
+    //Create a struct for storing time
+    timespec sleep_time;
+    sleep_time.tv_sec = 1;
+    sleep_time.tv_nsec = 0;
 
-        //unlock mutex
-        pthread_mutex_unlock(mutex_s);
+    //Sleep this thread for 1 sec 
+    nanosleep(&sleep_time, NULL);
+        
+    //To handle start, pause and reset operations
+    if (c == 'S' ||  c== 's'){
+        s = s+1;
+    }
+    if (c== 'P' || c== 'p'){
+        s = s;
+    }
+    if (c== 'R' or c == 'r'){
+        s = 0;
+    }
+        
+    if(s >59) s = 0;
+        
+    // unlock mutex
+    pthread_mutex_unlock(mutex_s);
     }
 
 }
@@ -134,20 +138,33 @@ void* s_timer(void* args) {
 void* m_timer(void* args) {
 
     while(true){
-        //Lock mutex till cond is met
-        pthread_mutex_lock(mutex_m);
 
-        //wait till s thread signals 59s completed
-        pthread_cond_wait(min,mutex_m);
-        m = m+1;
+    // Lock mutex during executiont
+    pthread_mutex_lock(mutex_m);
+
+    //Create a struct for storing time
+    timespec sleep_time;
+    sleep_time.tv_sec = 60;
+    sleep_time.tv_nsec = 0;
+
+    //Sleep this thread for 1 min 
+    nanosleep(&sleep_time, NULL);
         
-        //reset min after 59m
-        if (m >59){
-            m = 0;
-        }
+    //To handle start, pause and reset operations
+    if (c == 'S' ||  c== 's'){
+        m = m+1;
+    }
+    if (c== 'P' || c== 'p'){
+        m = m;
+    }
+    if (c== 'R' or c == 'r'){
+        m = 0;
+    }
+    
+    if(m >59) m = 0;
 
-        //unlock mutex
-        pthread_mutex_unlock(mutex_m);
+    // unlock mutex
+    pthread_mutex_unlock(mutex_m);
     }
 
 }
@@ -160,16 +177,13 @@ int main(int argc, char** argv){
     mutex_ds = new pthread_mutex_t();
     mutex_s = new pthread_mutex_t();
     mutex_m = new pthread_mutex_t();
-    sec = new pthread_cond_t();
-    min = new pthread_cond_t();
+    
     
     //Initilaize mutex and condition
     pthread_mutex_init(mutex_ds,NULL);
     pthread_mutex_init(mutex_s,NULL);
     pthread_mutex_init(mutex_m,NULL);
-    pthread_cond_init(sec, NULL);
-    pthread_cond_init(min, NULL);
-
+    
 
     //Create a thread object on the heap
     pthread_t* ds_thread = new pthread_t();
@@ -192,3 +206,5 @@ int main(int argc, char** argv){
 
     return 0;
 }
+
+        
