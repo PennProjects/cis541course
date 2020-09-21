@@ -1,4 +1,3 @@
-
 #include <pthread.h> //Needed for thread functionality
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
@@ -60,7 +59,12 @@ void* kb_read(void* args){
         pthread_mutex_lock(mutex);
         
         //read keyboard input
+        char prev_c =c;
         cin >>c;
+
+        if(prev_c =='s' && c =='r'){
+            c = 's';
+        }
 
         // unlock mutexss
         pthread_mutex_unlock(mutex);
