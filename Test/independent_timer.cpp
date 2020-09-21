@@ -3,6 +3,7 @@
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
 #include <iomanip>
+// #include <conio.h>
 
 
 using std::cout;
@@ -14,9 +15,16 @@ using std::setfill;
 pthread_mutex_t* mutex;
 pthread_cond_t* sec,min;
 int ds,s,m;
+char c;
 //Function to be run on separate threads
 // Must have single "void*" parameter and return "void*"
 //Thread is stopped / detroyed when function exists
+
+void* kb_read(void* args){
+
+    // c = getchar();
+}
+
 void* ds_timer(void* args) {
 
     while(true){
@@ -44,7 +52,7 @@ void* ds_timer(void* args) {
     pthread_mutex_unlock(mutex);
 
     cout << "\r" << setw(2) << setfill('0') << s << " : " 
-                 << ds << flush;
+                 << ds << c <<flush;
     }
 }
 
@@ -82,9 +90,11 @@ int main(int argc, char** argv){
     //Create a thread object on the heap for demonstration
     pthread_t* ds_thread = new pthread_t();
     pthread_t* s_thread = new pthread_t();
+    pthread_t* kb_thread = new pthread_t();
 
     // Initialise the thread with the default attributes,
     // the "thread_routine" fuction, qnd no argumrnts
+    pthread_create(kb_thread, NULL , kb_read, mutex);
     pthread_create(ds_thread, NULL , ds_timer, mutex);
     pthread_create(s_thread, NULL , s_timer, mutex);
 
