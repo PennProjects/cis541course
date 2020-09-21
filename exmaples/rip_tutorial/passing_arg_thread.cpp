@@ -19,9 +19,11 @@ int main(int argc, char *argv[])
     pthread_create(&t2, NULL, &thread_func, &j);
 
     /* This makes the main thread wait on the death of t1 and t2. */
-    pthread_join(t1, NULL);
+  
     pthread_join(t2, NULL);
 
     printf("In main thread\n");
+ 
+    pthread_join(t1, NULL);
     return 0;
 }
