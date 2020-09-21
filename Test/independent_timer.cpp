@@ -14,9 +14,6 @@ void* ds_timer(void* args) {
 
     while(true){
 
-    // //Lock mutex till cond is met
-    // pthread_mutex_lock(mutex);
-
     //Create a struct for storing time
     timespec sleep_time;
     sleep_time.tv_sec = 0;
@@ -28,23 +25,18 @@ void* ds_timer(void* args) {
     nanosleep(&sleep_time, NULL);
     ds = ds+1;
 
-    if(ds >9){
+    if (ds > 9) {
+        pthread_cond_broadcast(sec);
         ds = 0;
     }
-        
-    // //unlock mutex
-    // pthread_mutex_unlock(mutex);
+
     std::cout << "\r" << s << " : " << ds << std::flush;
     }
-
-    
 }
 
 void* s_timer(void* args) {
 
-    // //Lock mutex till cond is met
-    // pthread_mutex_lock(mutex);
-
+    while(true){
     //Create a struct for storing time
     timespec sleep_time;
     sleep_time.tv_sec = 1;
@@ -56,13 +48,7 @@ void* s_timer(void* args) {
     nanosleep(&sleep_time, NULL);
     s = s+1;
 
-    if(s>59){
-        s = 0;
     }
-
-    // //unlock mutex
-    // pthread_mutex_unlock(mutex);
-
 }
 
 
