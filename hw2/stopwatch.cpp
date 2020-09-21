@@ -24,9 +24,6 @@ char c;
 void* print_timer(void* args){
 
     while(true){
-    
-    // Lock mutex till cond is met
-    pthread_mutex_lock(mutex);
 
     //delay print by 1 ds
     timespec sleep_time;
@@ -44,10 +41,6 @@ void* print_timer(void* args){
     //delay print by 1 ds             
     nanosleep(&sleep_time, NULL);   
 
-    // unlock mutex
-    pthread_mutex_unlock(mutex);
-
-
     }
 }
 
@@ -55,8 +48,6 @@ void* print_timer(void* args){
 void* kb_read(void* args){
 
     while(true){
-        // Lock mutex till cond is met
-        pthread_mutex_lock(mutex);
         
         //read keyboard input
         char prev_c =c;
@@ -66,8 +57,6 @@ void* kb_read(void* args){
             c = 's';
         }
 
-        // unlock mutexss
-        pthread_mutex_unlock(mutex);
     }
 
 }
