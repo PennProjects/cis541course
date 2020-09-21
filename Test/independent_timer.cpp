@@ -2,6 +2,13 @@
 #include <pthread.h> //Needed for thread functionality
 #include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
+#include <iomanip>
+
+
+using std::cout;
+using std::flush;
+using std::setw;
+using std::setfill;
 
 //Use global variables for brevity
 pthread_mutex_t* mutex;
@@ -13,6 +20,9 @@ int ds,s,m;
 void* ds_timer(void* args) {
 
     while(true){
+    
+    //Lock mutex till cond is met
+    pthread_mutex_lock(mutex);
 
     //Create a struct for storing time
     timespec sleep_time;
@@ -30,13 +40,20 @@ void* ds_timer(void* args) {
         ds = 0;
     }
 
-    std::cout << "\r" << s << " : " << ds << std::flush;
+    //unlock mutex
+    pthread_mutex_unlock(mutex);
+
+    cout << "\r" << setw(2) << setfill('0') << s << " : " 
+                 << ds << flush;
     }
 }
 
 void* s_timer(void* args) {
 
     while(true){
+
+    //Lock mutex till cond is met
+    pthread_mutex_lock(mutex);
     //Create a struct for storing time
     timespec sleep_time;
     sleep_time.tv_sec = 1;
@@ -47,6 +64,9 @@ void* s_timer(void* args) {
     // If we are interrupted we do not care
     nanosleep(&sleep_time, NULL);
     s = s+1;
+
+    //unlock mutex
+    pthread_mutex_unlock(mutex);
 
     }
 }
