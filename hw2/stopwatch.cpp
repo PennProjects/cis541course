@@ -53,7 +53,8 @@ void* kb_read(void* args){
         //read keyboard input
         char prev_c =c;
         cin >>c;
-
+        
+        //Ignore a Reset after Start
         if((prev_c =='s' || prev_c =='S') && (c =='r' || c =='R')){
             c = 's';
         }
