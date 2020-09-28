@@ -1,0 +1,1 @@
+/usr/bin/c++   -pthread -std=c++14 -g   CMakeFiles/cis541.dir/hw2/stopwatch.cpp.o  -o cis541 

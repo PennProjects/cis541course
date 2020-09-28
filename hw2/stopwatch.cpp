@@ -1,5 +1,5 @@
 #include <pthread.h> //Needed for thread functionality
-#include <time.h> // Implicetely already included from pthread.h
+//#include <time.h> // Implicetely already included from pthread.h
 #include <iostream> // Needed for cout/endl
 #include <iomanip> //Needed for formatting cout
 
@@ -23,7 +23,7 @@ char c;
 
 
 //thread to print stopwatch
-void* print_timer(void* args){
+[[noreturn]] void* print_timer(void* args){
 
     while(true){
 

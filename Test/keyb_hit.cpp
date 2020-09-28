@@ -39,7 +39,7 @@ int keyboardhit(void)
 }
 
 //thread to print timer
-void* print_timer(void* args){
+[[noreturn]] void* print_timer(void* args){
 
     while(true){
     
