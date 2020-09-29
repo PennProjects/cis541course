@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jalpanchal/git/cis541/hw4_mqtt/main.cpp
+iostream
+-
+string
+-
+mqtt/async_client.h
+-
+vc2gps.h
+/home/jalpanchal/git/cis541/hw4_mqtt/vc2gps.h
+
+/home/jalpanchal/git/cis541/hw4_mqtt/vc2gps.h
+math.h
+-
+

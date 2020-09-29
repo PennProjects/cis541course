@@ -143,32 +143,59 @@ hw4_mqtt/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/build
 .PHONY : hw4_mqtt/fast
 
-main.o: main.cpp.o
+async_publish.o: async_publish.cpp.o
 
-.PHONY : main.o
+.PHONY : async_publish.o
 
 # target to build an object file
-main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/main.cpp.o
-.PHONY : main.cpp.o
+async_publish.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/async_publish.cpp.o
+.PHONY : async_publish.cpp.o
 
-main.i: main.cpp.i
+async_publish.i: async_publish.cpp.i
 
-.PHONY : main.i
+.PHONY : async_publish.i
 
 # target to preprocess a source file
-main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/main.cpp.i
-.PHONY : main.cpp.i
+async_publish.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/async_publish.cpp.i
+.PHONY : async_publish.cpp.i
 
-main.s: main.cpp.s
+async_publish.s: async_publish.cpp.s
 
-.PHONY : main.s
+.PHONY : async_publish.s
 
 # target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/main.cpp.s
-.PHONY : main.cpp.s
+async_publish.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/async_publish.cpp.s
+.PHONY : async_publish.cpp.s
+
+submission/main.o: submission/main.cpp.o
+
+.PHONY : submission/main.o
+
+# target to build an object file
+submission/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/submission/main.cpp.o
+.PHONY : submission/main.cpp.o
+
+submission/main.i: submission/main.cpp.i
+
+.PHONY : submission/main.i
+
+# target to preprocess a source file
+submission/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/submission/main.cpp.i
+.PHONY : submission/main.cpp.i
+
+submission/main.s: submission/main.cpp.s
+
+.PHONY : submission/main.s
+
+# target to generate assembly for a file
+submission/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/hw4_mqtt.dir/build.make CMakeFiles/hw4_mqtt.dir/submission/main.cpp.s
+.PHONY : submission/main.cpp.s
 
 # Help Target
 help:
@@ -179,9 +206,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... hw4_mqtt"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... async_publish.o"
+	@echo "... async_publish.i"
+	@echo "... async_publish.s"
+	@echo "... submission/main.o"
+	@echo "... submission/main.i"
+	@echo "... submission/main.s"
 .PHONY : help
 
 

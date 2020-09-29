@@ -82,10 +82,13 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/main.cpp">
+		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/async_publish.cpp">
 			<Option target="hw4_mqtt"/>
 		</Unit>
-		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/vc2gps.h">
+		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/submission/main.cpp">
+			<Option target="hw4_mqtt"/>
+		</Unit>
+		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/submission/vc2gps.h">
 			<Option target="hw4_mqtt"/>
 		</Unit>
 		<Unit filename="/home/jalpanchal/git/cis541/hw4_mqtt/CMakeLists.txt">

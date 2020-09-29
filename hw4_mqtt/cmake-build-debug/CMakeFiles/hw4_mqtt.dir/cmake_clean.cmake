@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/hw4_mqtt.dir/main.cpp.o"
+  "CMakeFiles/hw4_mqtt.dir/async_publish.cpp.o"
+  "CMakeFiles/hw4_mqtt.dir/submission/main.cpp.o"
   "hw4_mqtt"
   "hw4_mqtt.pdb"
 )
