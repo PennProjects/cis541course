@@ -1,0 +1,3 @@
+Install paho from: https://github.com/eclipse/paho.mqtt.cpp/blob/master/README.md
+
+Install Cathc2 : https://github.com/catchorg/Catch2/blob/master/docs/cmake-integration.md#installing-catch2-from-git-repository

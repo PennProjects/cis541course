@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/hw4_mqtt.dir/main.cpp.o  -o hw4_mqtt 
