@@ -78,10 +78,10 @@ int main(int argc, char* argv[]) {
     client.publish(msg)->wait();
 
 
-    for (int i =0; i<90; i= i+4 ) {
+    for (int i =0; i<104; i= i+4 ) {
 
         double position = 0+i;
-        RoadIdentifier roadDE = RoadIdentifier::DE;
+        RoadIdentifier roadDE = RoadIdentifier::AB;
         GPS_Coord e = GetLatLon(position, roadDE);
         printf("lat_DE %.9f\n", e.lat);
         printf("lon_DE %.9f\n", e.lon);
