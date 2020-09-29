@@ -29,11 +29,11 @@ public:
 
 int main(int argc, char* argv[]) {
 
-    double position = 75; // can take values from 0 to 100
-    RoadIdentifier road = RoadIdentifier::AB;
+    double position = 50; // can take values from 0 to 100
+    RoadIdentifier road = RoadIdentifier::BC;
     GPS_Coord c = GetLatLon(position, road);
-    printf("lat %.9f\n", c.lat);
-    printf("lon %.9f\n", c.lon);
+//    printf("lat %.9f\n", c.lat);
+//    printf("lon %.9f\n", c.lon);
 
     const string tb_uri = {"ssl://tb.precise.seas.upenn.edu:8883"};
     string client_id = {"client_id_1234"};
@@ -56,6 +56,15 @@ int main(int argc, char* argv[]) {
     // Perform connection
     client.connect(connopts)->wait();
     cout << "  ...OK" << endl;
+
+    // publishing a message
+    auto msg = mqtt::make_message("v1/gateway/connect",
+                                  "{\"device\":\"8660\",\"type\":\"Assignment#4\"}", 1, false);
+    client.publish(msg)->wait();
+
+    auto msg2 = mqtt::make_message("v1/gateway/attributes",
+                                  "{\"8660\":{\"latitude\":39.955861,\"longitude\":-75.191443}}", 1, false);
+    client.publish(msg2)->wait();
 
 
 }
