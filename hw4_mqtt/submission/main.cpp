@@ -1,20 +1,24 @@
+//Standard header files for c++
 #include <iostream>
 #include <string>
+#include <chrono>
+#include "time.h"
+
+//Header files for MQTT functions
 #include <mqtt/async_client.h>
 #include <mqtt/connect_options.h>
 #include <mqtt/ssl_options.h>
-#include <math.h>
-#include "time.h"
 
+//Header for GetLatLon
 #include "vc2gps.h"
 
 using namespace std;
+using namespace std::chrono;
 
 
 
-/**
- * A callback class for use with the main MQTT client.
- */
+
+ //A callback class for use with the main MQTT client.
 class callback : public virtual mqtt::callback
 {
 public:
@@ -33,22 +37,18 @@ public:
 
 int main(int argc, char* argv[]) {
 
-    double position = 25; // can take values from 0 to 100
-    RoadIdentifier road = RoadIdentifier::AB;
-    GPS_Coord c = GetLatLon(position, road);
-    printf("lat %.9f\n", c.lat);
-    printf("lon %.9f\n", c.lon);
-    cout << c.lon <<endl;
+//  getting starting position of car at A
+    double start = 25; // Start at 0
+    RoadIdentifier road = RoadIdentifier::AB; //Select road AB
+    GPS_Coord gps = GetLatLon(start, road);
+    cout << "Starting Joiney at : " <<gps.lat<<","<<gps.lon<<endl;
 
-
-    RoadIdentifier roadDE = RoadIdentifier::DE;
-    GPS_Coord e = GetLatLon(position, roadDE);
-    printf("lat_DE %.9f\n", e.lat);
-    printf("lon_DE %.9f\n", e.lon);
-
+//    setting loop wait time for updating location at 1s
+//    the wait after sending mqtt message is set to 20ms, based on repeated calculations of avg wait time
+//
     timespec sleep_time;
-    sleep_time.tv_sec = 1;
-    sleep_time.tv_nsec = 0;
+    sleep_time.tv_sec = 0;
+    sleep_time.tv_nsec = 980000000;
 
     const string tb_uri = {"ssl://tb.precise.seas.upenn.edu:8883"};
     string client_id = {"client_id_1234"};
@@ -77,12 +77,13 @@ int main(int argc, char* argv[]) {
                                   "{\"device\":\"8660\",\"type\":\"Assignment#4\"}", 1, false);
     client.publish(msg)->wait();
 
-
+//    auto start = high_resolution_clock::now();
     for (int i =0; i<104; i= i+4 ) {
+        auto start = high_resolution_clock::now();
 
-        double position = 0+i;
-        RoadIdentifier roadDE = RoadIdentifier::AB;
-        GPS_Coord e = GetLatLon(position, roadDE);
+        double position1 = 0+i;
+        RoadIdentifier roadDE1 = RoadIdentifier::DE;
+        GPS_Coord e = GetLatLon(position1, roadDE1);
         printf("lat_DE %.9f\n", e.lat);
         printf("lon_DE %.9f\n", e.lon);
 
@@ -92,10 +93,16 @@ int main(int argc, char* argv[]) {
 
         auto msg2 = mqtt::make_message("v1/gateway/attributes",
                                        mq_message, 1, false);
-        client.publish(msg2)->wait();
+        client.publish(msg2)->wait_for(19);
 
         nanosleep(&sleep_time, NULL);
 //    client.publish(msg2)->wait();
+
+        auto stop = high_resolution_clock::now();
+
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << duration.count() << endl;
+
     }
 
 
