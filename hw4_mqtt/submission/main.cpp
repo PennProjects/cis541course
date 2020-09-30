@@ -26,13 +26,9 @@ public:
         if (!cause.empty())
             std::cout << "\tcause: " << cause << std::endl;
     }
-//for debuting to see if message was received
-
-//     void delivery_complete(mqtt::delivery_token_ptr tok) override {
-//         std::cout << "\tDelivery complete for token: "
-//                   << (tok ? tok->get_message_id() : -1) << std::endl;
-//     }
 };
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -41,7 +37,7 @@ int main(int argc, char* argv[]) {
     double start_location = 0; // Start at 0
     RoadIdentifier road = RoadIdentifier::AB; //Select road AB
     GPS_Coord gps_start = GetLatLon(start_location, road);
-    cout << "Starting Joiney at : " <<gps_start.lat<<","<<gps_start.lon<<endl;
+    cout << "Starting Journey at A : " <<gps_start.lat<<","<<gps_start.lon<<endl;
 
 //    setting loop wait time for updating location at 1s
 //    the wait after sending mqtt message is set to 10ms,
@@ -90,9 +86,7 @@ int main(int argc, char* argv[]) {
 
 
 
-//     To calibrate loop wait time
-//    auto start = high_resolution_clock::now();
-
+//     Global variable for gps position
     GPS_Coord gps;
 
 //     update position by 4 meters every 1s to have a drive speed of 4 m/s
@@ -107,12 +101,12 @@ int main(int argc, char* argv[]) {
 //         message construction
         string lat = to_string(gps.lat);
         string lon = to_string(gps.lon);
-        string mqtt_locaction_message = "{\"8660\":{\"latitude\":" + lat + ",\"longitude\":" + lon + "}}";
+        string mqtt_location_message = "{\"8660\":{\"latitude\":" + lat + ",\"longitude\":" + lon + "}}";
 
         string mqtt_attr_topic = "v1/gateway/attributes";
 
 //         pulishing location message to mqtt Dashboard
-        auto location_update_msg = mqtt::make_message(mqtt_attr_topic,mqtt_locaction_message, 1, false);
+        auto location_update_msg = mqtt::make_message(mqtt_attr_topic,mqtt_location_message, 1, false);
         client.publish(location_update_msg)->wait_for(10); //wait for a 10ms Timeout for acknowlodgment from broker
 
 //         wait for 990 ms to ghave effective 1s update
@@ -120,11 +114,7 @@ int main(int argc, char* argv[]) {
 
     }
 
-//         To calibrate loop wait time
-//         auto stop = high_resolution_clock::now();
-//         auto duration = duration_cast<microseconds>(stop - start);
-//         cout << duration.count() << endl;
-
+//     Print final car position
     printf("The car has reached its destination at B : %f , %f\n", gps.lat, gps.lon);
 
 
